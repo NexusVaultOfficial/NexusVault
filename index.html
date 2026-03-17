@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexusVault — Homework Hub</title>
+  <meta name="description" content="NexusVault: A premium homework management platform for students and educators. Browse subjects, units, chapters, and homework with ease." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ============ LOADING SCREEN ============ -->
+  <div id="loading-screen" class="loading-screen">
+    <div class="loader-ring"></div>
+    <p class="loader-text">Loading NexusVault…</p>
+  </div>
+
+  <!-- ============ TOAST CONTAINER ============ -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- ========================================= -->
+  <!-- ============ AUTH SECTION ================ -->
+  <!-- ========================================= -->
+  <section id="auth-section" class="auth-section hidden">
+    <div class="auth-backdrop"></div>
+    <div class="auth-card glass-card">
+      <div class="auth-logo">
+        <span class="logo-icon">📚</span>
+        <h1>NexusVault</h1>
+        <p class="auth-subtitle">Your homework, organized.</p>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="login-form" class="auth-form" autocomplete="on">
+        <h2>Welcome Back</h2>
+        <div class="input-group">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" placeholder="you@example.com" required />
+        </div>
+        <div class="input-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-full" id="login-btn">Sign In</button>
+        <div class="auth-links">
+          <a href="#" id="show-register">Create an account</a>
+          <a href="#" id="show-forgot">Forgot password?</a>
+        </div>
+      </form>
+
+      <!-- REGISTER FORM -->
+      <form id="register-form" class="auth-form hidden" autocomplete="on">
+        <h2>Create Account</h2>
+        <div class="input-group">
+          <label for="reg-email">Email</label>
+          <input type="email" id="reg-email" placeholder="you@example.com" required />
+        </div>
+        <div class="input-group">
+          <label for="reg-password">Password</label>
+          <input type="password" id="reg-password" placeholder="Min 6 characters" minlength="6" required />
+        </div>
+        <div class="input-group">
+          <label for="reg-password2">Confirm Password</label>
+          <input type="password" id="reg-password2" placeholder="Repeat password" minlength="6" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-full" id="register-btn">Register</button>
+        <div class="auth-links">
+          <a href="#" id="show-login-from-reg">Already have an account?</a>
+        </div>
+      </form>
+
+      <!-- FORGOT PASSWORD FORM -->
+      <form id="forgot-form" class="auth-form hidden">
+        <h2>Reset Password</h2>
+        <p class="form-hint">Enter your email and we'll send a reset link.</p>
+        <div class="input-group">
+          <label for="forgot-email">Email</label>
+          <input type="email" id="forgot-email" placeholder="you@example.com" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-full" id="forgot-btn">Send Reset Link</button>
+        <div class="auth-links">
+          <a href="#" id="show-login-from-forgot">Back to login</a>
+        </div>
+      </form>
+
+      <!-- VERIFY EMAIL NOTICE -->
+      <div id="verify-email-notice" class="auth-form hidden">
+        <h2>Verify Your Email</h2>
+        <div class="verify-icon">✉️</div>
+        <p>We've sent a verification link to your email. Please verify to access NexusVault.</p>
+        <button class="btn btn-primary btn-full" id="resend-verify-btn">Resend Verification</button>
+        <button class="btn btn-secondary btn-full" id="check-verify-btn">I've Verified — Continue</button>
+        <button class="btn btn-ghost btn-full" id="verify-logout-btn">Sign Out</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================= -->
+  <!-- ============ MAIN APP =================== -->
+  <!-- ========================================= -->
+  <section id="app-section" class="app-section hidden">
+    <!-- TOP BAR -->
+    <header class="top-bar">
+      <div class="top-bar-left">
+        <button id="sidebar-toggle" class="btn-icon sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+        <h1 class="top-bar-title"><span class="logo-icon-sm">📚</span> NexusVault</h1>
+      </div>
+      <div class="top-bar-right">
+        <span id="user-email-display" class="user-email"></span>
+        <span id="admin-badge" class="badge badge-admin hidden">Admin</span>
+        <span id="verified-badge" class="badge badge-verified hidden">✓ Verified</span>
+        <button id="logout-btn" class="btn btn-ghost btn-sm">Sign Out</button>
+      </div>
+    </header>
+
+    <div class="app-body">
+      <!-- SIDEBAR -->
+      <aside id="sidebar" class="sidebar">
+        <nav class="sidebar-nav">
+          <div class="sidebar-section">
+            <h3 class="sidebar-heading">Navigation</h3>
+            <button id="nav-home" class="sidebar-link active" data-view="home">
+              <span class="nav-icon">🏠</span> Home
+            </button>
+            <button id="nav-browse" class="sidebar-link" data-view="browse">
+              <span class="nav-icon">📖</span> Browse
+            </button>
+          </div>
+          <div id="admin-nav" class="sidebar-section hidden">
+            <h3 class="sidebar-heading">Admin Panel</h3>
+            <button id="nav-manage-subjects" class="sidebar-link" data-view="manage-subjects">
+              <span class="nav-icon">📁</span> Subjects
+            </button>
+            <button id="nav-manage-units" class="sidebar-link" data-view="manage-units">
+              <span class="nav-icon">📂</span> Units
+            </button>
+            <button id="nav-manage-chapters" class="sidebar-link" data-view="manage-chapters">
+              <span class="nav-icon">📑</span> Chapters
+            </button>
+            <button id="nav-manage-homework" class="sidebar-link" data-view="manage-homework">
+              <span class="nav-icon">📝</span> Homework
+            </button>
+          </div>
+        </nav>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="main-content">
+
+        <!-- HOME VIEW -->
+        <div id="view-home" class="view active">
+          <div class="view-header">
+            <h2>Welcome to NexusVault</h2>
+            <p class="view-subtitle">Your central hub for homework and study materials.</p>
+          </div>
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card glass-card">
+              <div class="stat-icon">📁</div>
+              <div class="stat-value" id="stat-subjects">0</div>
+              <div class="stat-label">Subjects</div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-icon">📂</div>
+              <div class="stat-value" id="stat-units">0</div>
+              <div class="stat-label">Units</div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-icon">📑</div>
+              <div class="stat-value" id="stat-chapters">0</div>
+              <div class="stat-label">Chapters</div>
+            </div>
+            <div class="stat-card glass-card">
+              <div class="stat-icon">📝</div>
+              <div class="stat-value" id="stat-homeworks">0</div>
+              <div class="stat-label">Homework</div>
+            </div>
+          </div>
+          <div class="quick-help glass-card">
+            <h3>Getting Started</h3>
+            <ul>
+              <li>Use <strong>Browse</strong> to navigate Subjects → Units → Chapters → Homework.</li>
+              <li>Filter homework by <strong>type</strong> (exercise / extra) or by <strong>tags</strong>.</li>
+              <li>Click any homework link to preview or download from Google Drive.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- BROWSE VIEW (Student) -->
+        <div id="view-browse" class="view hidden">
+          <div class="view-header">
+            <h2>Browse Homework</h2>
+            <p class="view-subtitle">Navigate through subjects, units, and chapters to find your homework.</p>
+          </div>
+
+          <!-- Breadcrumb -->
+          <div class="breadcrumb" id="breadcrumb">
+            <span class="breadcrumb-item active">Subjects</span>
+          </div>
+
+          <!-- Filters (visible when homework is shown) -->
+          <div id="homework-filters" class="filter-bar hidden">
+            <div class="filter-group">
+              <label for="filter-type">Type</label>
+              <select id="filter-type">
+                <option value="">All Types</option>
+                <option value="exercise">Exercise</option>
+                <option value="extra">Extra</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="filter-tags">Tags</label>
+              <input type="text" id="filter-tags" placeholder="e.g. algebra, quiz" />
+            </div>
+            <button id="apply-filters-btn" class="btn btn-primary btn-sm">Apply</button>
+            <button id="clear-filters-btn" class="btn btn-ghost btn-sm">Clear</button>
+          </div>
+
+          <!-- Dynamic list -->
+          <div id="browse-list" class="browse-list"></div>
+        </div>
+
+        <!-- ============ ADMIN VIEWS ============ -->
+
+        <!-- MANAGE SUBJECTS -->
+        <div id="view-manage-subjects" class="view hidden">
+          <div class="view-header">
+            <h2>Manage Subjects</h2>
+            <button class="btn btn-primary btn-sm" id="add-subject-btn">+ Add Subject</button>
+          </div>
+          <div id="subjects-list" class="admin-list"></div>
+          <!-- Modal -->
+          <div id="subject-modal" class="modal-overlay hidden">
+            <div class="modal glass-card">
+              <h3 id="subject-modal-title">Add Subject</h3>
+              <form id="subject-form">
+                <input type="hidden" id="subject-id" />
+                <div class="input-group">
+                  <label for="subject-name">Subject Name</label>
+                  <input type="text" id="subject-name" placeholder="e.g. Mathematics" required />
+                </div>
+                <div class="modal-actions">
+                  <button type="submit" class="btn btn-primary">Save</button>
+                  <button type="button" class="btn btn-ghost modal-close" data-modal="subject-modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- MANAGE UNITS -->
+        <div id="view-manage-units" class="view hidden">
+          <div class="view-header">
+            <h2>Manage Units</h2>
+            <button class="btn btn-primary btn-sm" id="add-unit-btn">+ Add Unit</button>
+          </div>
+          <div id="units-list" class="admin-list"></div>
+          <div id="unit-modal" class="modal-overlay hidden">
+            <div class="modal glass-card">
+              <h3 id="unit-modal-title">Add Unit</h3>
+              <form id="unit-form">
+                <input type="hidden" id="unit-id" />
+                <div class="input-group">
+                  <label for="unit-subject-select">Subject</label>
+                  <select id="unit-subject-select" required></select>
+                </div>
+                <div class="input-group">
+                  <label for="unit-name">Unit Name</label>
+                  <input type="text" id="unit-name" placeholder="e.g. Algebra" required />
+                </div>
+                <div class="modal-actions">
+                  <button type="submit" class="btn btn-primary">Save</button>
+                  <button type="button" class="btn btn-ghost modal-close" data-modal="unit-modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- MANAGE CHAPTERS -->
+        <div id="view-manage-chapters" class="view hidden">
+          <div class="view-header">
+            <h2>Manage Chapters</h2>
+            <button class="btn btn-primary btn-sm" id="add-chapter-btn">+ Add Chapter</button>
+          </div>
+          <div id="chapters-list" class="admin-list"></div>
+          <div id="chapter-modal" class="modal-overlay hidden">
+            <div class="modal glass-card">
+              <h3 id="chapter-modal-title">Add Chapter</h3>
+              <form id="chapter-form">
+                <input type="hidden" id="chapter-id" />
+                <div class="input-group">
+                  <label for="chapter-subject-select">Subject</label>
+                  <select id="chapter-subject-select" required></select>
+                </div>
+                <div class="input-group">
+                  <label for="chapter-unit-select">Unit</label>
+                  <select id="chapter-unit-select" required></select>
+                </div>
+                <div class="input-group">
+                  <label for="chapter-name">Chapter Name</label>
+                  <input type="text" id="chapter-name" placeholder="e.g. Linear Equations" required />
+                </div>
+                <div class="modal-actions">
+                  <button type="submit" class="btn btn-primary">Save</button>
+                  <button type="button" class="btn btn-ghost modal-close" data-modal="chapter-modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- MANAGE HOMEWORK -->
+        <div id="view-manage-homework" class="view hidden">
+          <div class="view-header">
+            <h2>Manage Homework</h2>
+            <button class="btn btn-primary btn-sm" id="add-homework-btn">+ Add Homework</button>
+          </div>
+          <div id="homeworks-admin-list" class="admin-list"></div>
+          <div id="homework-modal" class="modal-overlay hidden">
+            <div class="modal glass-card modal-lg">
+              <h3 id="homework-modal-title">Add Homework</h3>
+              <form id="homework-form">
+                <input type="hidden" id="homework-id" />
+                <div class="form-row">
+                  <div class="input-group">
+                    <label for="hw-subject-select">Subject</label>
+                    <select id="hw-subject-select" required></select>
+                  </div>
+                  <div class="input-group">
+                    <label for="hw-unit-select">Unit</label>
+                    <select id="hw-unit-select" required></select>
+                  </div>
+                  <div class="input-group">
+                    <label for="hw-chapter-select">Chapter</label>
+                    <select id="hw-chapter-select" required></select>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <label for="hw-name">Homework Title</label>
+                  <input type="text" id="hw-name" placeholder="e.g. Practice Set 1" required />
+                </div>
+                <div class="input-group">
+                  <label for="hw-type">Type</label>
+                  <select id="hw-type" required>
+                    <option value="exercise">Exercise</option>
+                    <option value="extra">Extra</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label for="hw-description">Description</label>
+                  <textarea id="hw-description" rows="3" placeholder="Brief description of this homework…"></textarea>
+                </div>
+                <div class="input-group">
+                  <label>Google Drive Links <span class="hint">(one per line)</span></label>
+                  <div id="hw-links-container">
+                    <div class="link-input-row">
+                      <input type="url" class="hw-link-input" placeholder="https://drive.google.com/file/d/…" />
+                      <button type="button" class="btn btn-ghost btn-icon-sm remove-link-btn" title="Remove">✕</button>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-secondary btn-sm" id="add-link-btn">+ Add Link</button>
+                </div>
+                <div class="input-group">
+                  <label for="hw-tags">Tags <span class="hint">(comma-separated)</span></label>
+                  <input type="text" id="hw-tags" placeholder="e.g. algebra, quiz, chapter1" />
+                </div>
+                <div class="modal-actions">
+                  <button type="submit" class="btn btn-primary">Save Homework</button>
+                  <button type="button" class="btn btn-ghost modal-close" data-modal="homework-modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </section>
+
+  <!-- Firebase SDK (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
